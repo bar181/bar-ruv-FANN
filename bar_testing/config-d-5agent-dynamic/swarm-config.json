@@ -1,0 +1,46 @@
+{
+  "configuration": "Config D - 5 Agents Dynamic",
+  "topology": "mesh",
+  "coordination": "adaptive",
+  "strategy": "dynamic_role_assignment",
+  "timestamp": "2025-07-06T00:00:00Z",
+  "agents": {
+    "strategic-lead": {
+      "role": "Strategic Coordinator",
+      "responsibilities": ["workflow orchestration", "optimal role assignment", "high-level strategy"],
+      "specializations": ["project management", "resource allocation", "decision coordination"]
+    },
+    "senior-developer": {
+      "role": "Senior Developer",
+      "responsibilities": ["complex algorithms", "system architecture", "technical leadership"],
+      "specializations": ["advanced algorithms", "system design", "code optimization"]
+    },
+    "full-stack-developer": {
+      "role": "Full-Stack Developer", 
+      "responsibilities": ["implementation", "integration", "API development"],
+      "specializations": ["frontend/backend", "databases", "web technologies"]
+    },
+    "qa-specialist": {
+      "role": "QA Specialist",
+      "responsibilities": ["testing strategies", "quality validation", "bug detection"],
+      "specializations": ["test automation", "quality assurance", "edge case analysis"]
+    },
+    "performance-analyst": {
+      "role": "Performance Analyst",
+      "responsibilities": ["optimization", "profiling", "efficiency analysis"],
+      "specializations": ["performance tuning", "metrics analysis", "bottleneck identification"]
+    }
+  },
+  "coordination_protocol": {
+    "pre_task": "npx ruv-swarm hook pre-task --description [test_level]",
+    "memory_store": "npx ruv-swarm hook notification --message [agent_decisions]",
+    "post_task": "npx ruv-swarm hook post-task --analyze-performance true"
+  },
+  "test_levels": ["simple", "moderate", "high"],
+  "dynamic_features": {
+    "adaptive_specialization": true,
+    "role_flexibility": true,
+    "real_time_coordination": true,
+    "performance_optimization": true
+  }
+}
