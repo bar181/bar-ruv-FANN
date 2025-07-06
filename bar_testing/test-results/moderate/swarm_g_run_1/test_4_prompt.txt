@@ -1,0 +1,37 @@
+Analyze and recommend a caching strategy for an e-commerce platform:
+
+Context:
+- 50,000 daily active users
+- Product catalog: 100,000 items
+- User sessions with shopping carts
+- Personalized recommendations
+- Real-time inventory updates
+- Global presence (3 regions)
+
+Compare these caching solutions:
+1. Redis
+2. Memcached
+3. Hazelcast
+4. Application-level caching (in-memory)
+
+Analyze each for:
+- Performance at scale
+- Data persistence options
+- Clustering/replication capabilities
+- Cost implications
+- Implementation complexity
+- Specific e-commerce features support
+
+Deliverables:
+1. Feature comparison matrix
+2. Architecture diagram for recommended solution
+3. Caching strategy for different data types:
+   - Product catalog
+   - User sessions
+   - Shopping carts
+   - Recommendations
+4. Implementation code snippet for cart caching
+5. Migration plan from current no-cache setup
+
+Consider: Some data needs persistence, some is ephemeral,
+and inventory must be real-time accurate.
