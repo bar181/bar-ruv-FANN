@@ -1,0 +1,246 @@
+```python
+import heapq
+import threading
+from typing import Any, Tuple, Optional
+from enum import IntEnum
+import unittest
+import time
+
+
+class Priority(IntEnum):
+    """Priority levels for tasks."""
+    HIGH = 1
+    MEDIUM = 2
+    LOW = 3
+
+
+class TaskQueue:
+    """
+    A thread-safe priority queue for managing tasks.
+    
+    Tasks with higher priority (lower numeric value) are processed first.
+    Tasks with the same priority are processed in FIFO order.
+    """
+    
+    def __init__(self):
+        """Initialize an empty TaskQueue."""
+        self._heap = []
+        self._counter = 0  # For FIFO ordering of same-priority tasks
+        self._lock = threading.Lock()
+    
+    def add_task(self, task: Any, priority: Priority) -> None:
+        """
+        Add a task to the queue with the specified priority.
+        
+        Args:
+            task: The task to add (can be any object)
+            priority: Priority level (HIGH, MEDIUM, or LOW)
+            
+        Raises:
+            ValueError: If priority is not a valid Priority value
+            TypeError: If priority is not an integer
+        """
+        if not isinstance(priority, int):
+            raise TypeError(f"Priority must be an integer, got {type(priority).__name__}")
+        
+        if priority not in [Priority.HIGH, Priority.MEDIUM, Priority.LOW]:
+            raise ValueError(f"Invalid priority: {priority}. Must be HIGH (1), MEDIUM (2), or LOW (3)")
+        
+        with self._lock:
+            # Use counter to ensure FIFO for same priority
+            entry = (priority, self._counter, task)
+            heapq.heappush(self._heap, entry)
+            self._counter += 1
+    
+    def get_next_task(self) -> Any:
+        """
+        Remove and return the highest priority task from the queue.
+        
+        Returns:
+            The highest priority task
+            
+        Raises:
+            IndexError: If the queue is empty
+        """
+        with self._lock:
+            if not self._heap:
+                raise IndexError("Cannot get task from empty queue")
+            
+            priority, counter, task = heapq.heappop(self._heap)
+            return task
+    
+    def peek(self) -> Any:
+        """
+        Return the highest priority task without removing it.
+        
+        Returns:
+            The highest priority task
+            
+        Raises:
+            IndexError: If the queue is empty
+        """
+        with self._lock:
+            if not self._heap:
+                raise IndexError("Cannot peek at empty queue")
+            
+            priority, counter, task = self._heap[0]
+            return task
+    
+    def is_empty(self) -> bool:
+        """
+        Check if the queue is empty.
+        
+        Returns:
+            True if the queue is empty, False otherwise
+        """
+        with self._lock:
+            return len(self._heap) == 0
+    
+    def size(self) -> int:
+        """
+        Return the number of tasks in the queue.
+        
+        Returns:
+            The number of tasks in the queue
+        """
+        with self._lock:
+            return len(self._heap)
+    
+    def clear(self) -> None:
+        """Remove all tasks from the queue."""
+        with self._lock:
+            self._heap.clear()
+
+
+# Usage Example
+def usage_example():
+    """Demonstrate basic usage of TaskQueue."""
+    print("=== TaskQueue Usage Example ===")
+    
+    # Create a task queue
+    queue = TaskQueue()
+    
+    # Add tasks with different priorities
+    queue.add_task("Critical bug fix", Priority.HIGH)
+    queue.add_task("Feature implementation", Priority.MEDIUM)
+    queue.add_task("Code cleanup", Priority.LOW)
+    queue.add_task("Security patch", Priority.HIGH)
+    queue.add_task("Documentation update", Priority.LOW)
+    
+    # Process tasks in priority order
+    print("\nProcessing tasks in priority order:")
+    while not queue.is_empty():
+        task = queue.get_next_task()
+        print(f"Processing: {task}")
+
+
+# Unit Tests
+class TestTaskQueue(unittest.TestCase):
+    """Unit tests for TaskQueue class."""
+    
+    def setUp(self):
+        """Set up test fixtures."""
+        self.queue = TaskQueue()
+    
+    def test_empty_queue(self):
+        """Test operations on empty queue."""
+        self.assertTrue(self.queue.is_empty())
+        self.assertEqual(self.queue.size(), 0)
+        
+        with self.assertRaises(IndexError):
+            self.queue.get_next_task()
+        
+        with self.assertRaises(IndexError):
+            self.queue.peek()
+    
+    def test_priority_ordering(self):
+        """Test that tasks are returned in priority order."""
+        self.queue.add_task("Low priority", Priority.LOW)
+        self.queue.add_task("High priority", Priority.HIGH)
+        self.queue.add_task("Medium priority", Priority.MEDIUM)
+        
+        self.assertEqual(self.queue.get_next_task(), "High priority")
+        self.assertEqual(self.queue.get_next_task(), "Medium priority")
+        self.assertEqual(self.queue.get_next_task(), "Low priority")
+    
+    def test_fifo_same_priority(self):
+        """Test FIFO ordering for tasks with same priority."""
+        self.queue.add_task("First medium", Priority.MEDIUM)
+        self.queue.add_task("Second medium", Priority.MEDIUM)
+        self.queue.add_task("Third medium", Priority.MEDIUM)
+        
+        self.assertEqual(self.queue.get_next_task(), "First medium")
+        self.assertEqual(self.queue.get_next_task(), "Second medium")
+        self.assertEqual(self.queue.get_next_task(), "Third medium")
+    
+    def test_peek_does_not_remove(self):
+        """Test that peek doesn't remove tasks."""
+        self.queue.add_task("Task 1", Priority.HIGH)
+        
+        # Peek multiple times
+        self.assertEqual(self.queue.peek(), "Task 1")
+        self.assertEqual(self.queue.peek(), "Task 1")
+        self.assertEqual(self.queue.size(), 1)
+        
+        # Get should return the same task
+        self.assertEqual(self.queue.get_next_task(), "Task 1")
+        self.assertTrue(self.queue.is_empty())
+    
+    def test_invalid_priority(self):
+        """Test error handling for invalid priorities."""
+        with self.assertRaises(ValueError):
+            self.queue.add_task("Task", 0)  # Invalid priority
+        
+        with self.assertRaises(ValueError):
+            self.queue.add_task("Task", 4)  # Invalid priority
+        
+        with self.assertRaises(TypeError):
+            self.queue.add_task("Task", "HIGH")  # Wrong type
+    
+    def test_thread_safety(self):
+        """Test thread-safe operations."""
+        import concurrent.futures
+        
+        def add_tasks(start, count):
+            for i in range(start, start + count):
+                self.queue.add_task(f"Task {i}", Priority.MEDIUM)
+        
+        # Add tasks from multiple threads
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            futures = []
+            for i in range(4):
+                futures.append(executor.submit(add_tasks, i * 25, 25))
+            
+            for future in concurrent.futures.as_completed(futures):
+                future.result()
+        
+        # Should have 100 tasks
+        self.assertEqual(self.queue.size(), 100)
+        
+        # Remove all tasks
+        tasks = []
+        while not self.queue.is_empty():
+            tasks.append(self.queue.get_next_task())
+        
+        self.assertEqual(len(tasks), 100)
+        self.assertEqual(len(set(tasks)), 100)  # All unique
+    
+    def test_clear_queue(self):
+        """Test clearing the queue."""
+        self.queue.add_task("Task 1", Priority.HIGH)
+        self.queue.add_task("Task 2", Priority.LOW)
+        
+        self.assertEqual(self.queue.size(), 2)
+        self.queue.clear()
+        self.assertEqual(self.queue.size(), 0)
+        self.assertTrue(self.queue.is_empty())
+
+
+if __name__ == "__main__":
+    # Run usage example
+    usage_example()
+    
+    # Run unit tests
+    print("\n=== Running Unit Tests ===")
+    unittest.main(argv=[''], exit=False, verbosity=2)
+```

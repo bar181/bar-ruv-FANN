@@ -1,0 +1,21 @@
+Research and compare these database technologies for a high-traffic e-commerce platform:
+
+1. PostgreSQL with read replicas
+2. MongoDB with sharding
+3. DynamoDB
+4. CockroachDB
+
+Analyze each for:
+- Performance characteristics (read/write throughput)
+- Scalability patterns and limitations
+- Consistency guarantees and CAP theorem tradeoffs
+- Operational complexity and costs
+- Best use cases within e-commerce (catalog, orders, inventory, user data)
+
+Provide:
+1. Detailed comparison table
+2. Architecture recommendations for different e-commerce components
+3. Migration considerations from traditional RDBMS
+4. Sample configuration snippets for optimal performance
+
+Make a specific recommendation with justification.
