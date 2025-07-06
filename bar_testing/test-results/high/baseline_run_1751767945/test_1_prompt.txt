@@ -1,0 +1,19 @@
+Create a Python class called RateLimitedAPIClient that implements the following requirements:
+
+1. Support configurable rate limiting (e.g., 100 requests per minute)
+2. Implement exponential backoff retry logic for failed requests
+3. Handle concurrent requests using asyncio
+4. Support request queuing when rate limit is reached
+5. Provide detailed logging and metrics collection
+6. Include proper error handling for network issues, timeouts, and API errors
+7. Support both GET and POST methods
+8. Include a circuit breaker pattern that opens after 5 consecutive failures
+
+The client should be production-ready with type hints, docstrings, and comprehensive error handling.
+
+Additional requirements:
+- Include comprehensive unit tests using pytest and pytest-asyncio
+- Mock external API calls appropriately
+- Test rate limiting, retries, circuit breaker, and error scenarios
+- Include usage examples for common scenarios
+- Document design decisions and tradeoffs
