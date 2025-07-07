@@ -1,0 +1,18 @@
+================================================================================
+VEHICLE ROUTING PROBLEM WITH TIME WINDOWS (VRPTW)
+Research Division - 20-Agent Maximum Stress Test
+================================================================================
+Traceback (most recent call last):
+  File "/workspaces/ruv-FANN/bar_testing/test-results/high/swarm_h_run_1/vehicle_routing_optimization.py", line 1144, in <module>
+    solution, optimizer = demonstrate_vrptw_solution()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ruv-FANN/bar_testing/test-results/high/swarm_h_run_1/vehicle_routing_optimization.py", line 1051, in demonstrate_vrptw_solution
+    optimizer = VRPTWOptimizer(depot=depot, trucks=[], locations=[])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ruv-FANN/bar_testing/test-results/high/swarm_h_run_1/vehicle_routing_optimization.py", line 125, in __init__
+    self.time_matrix = self._compute_time_matrix()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ruv-FANN/bar_testing/test-results/high/swarm_h_run_1/vehicle_routing_optimization.py", line 153, in _compute_time_matrix
+    return self.distance_matrix / self.trucks[0].speed
+                                  ~~~~~~~~~~~^^^
+IndexError: list index out of range

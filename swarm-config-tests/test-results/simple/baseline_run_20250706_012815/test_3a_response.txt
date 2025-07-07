@@ -1,0 +1,134 @@
+## Mathematical Solution
+
+### Problem Setup
+- Total fencing available: 100 meters
+- Rectangular enclosure against a wall (only 3 sides need fencing)
+- Let width = w (perpendicular to wall), length = l (parallel to wall)
+- Constraint: 2w + l = 100 (two widths + one length)
+- Objective: Maximize Area = w × l
+
+### Calculus Solution
+
+1. **Express area in terms of one variable:**
+   - From constraint: l = 100 - 2w
+   - Area(w) = w × (100 - 2w) = 100w - 2w²
+
+2. **Find critical points:**
+   - dA/dw = 100 - 4w
+   - Set dA/dw = 0: 100 - 4w = 0
+   - Solving: w = 25 meters
+
+3. **Verify maximum:**
+   - d²A/dw² = -4 < 0 (negative, confirming maximum)
+   - When w = 25: l = 100 - 2(25) = 50 meters
+   - Maximum area = 25 × 50 = 1250 m²
+
+## Python Implementation
+
+```python
+def maximize_enclosure(fence_length):
+    """
+    Find optimal dimensions for a rectangular enclosure against a wall.
+    
+    Args:
+        fence_length: Total meters of fencing available (positive number)
+        
+    Returns:
+        Tuple of (width, length, area) for optimal dimensions
+        
+    Example:
+        >>> maximize_enclosure(100)
+        (25.0, 50.0, 1250.0)
+    """
+    # Validate input
+    if fence_length <= 0:
+        raise ValueError("Fence length must be positive")
+    
+    # Optimal width is fence_length/4 (from calculus)
+    width = fence_length / 4
+    
+    # Length uses remaining fence after two widths
+    length = fence_length - 2 * width
+    
+    # Calculate maximum area
+    area = width * length
+    
+    return (width, length, area)
+
+
+# Visualization function
+def visualize_area_relationship(fence_length):
+    """Create a simple text-based visualization of area vs width."""
+    import math
+    
+    print(f"\nArea vs Width for {fence_length}m of fencing")
+    print("=" * 50)
+    
+    # Calculate areas for different widths
+    max_width = fence_length / 2  # Maximum possible width
+    step = max_width / 20
+    
+    max_area = 0
+    optimal_w = 0
+    
+    for i in range(21):
+        w = i * step
+        if w == 0:
+            continue
+            
+        l = fence_length - 2 * w
+        if l <= 0:
+            break
+            
+        area = w * l
+        if area > max_area:
+            max_area = area
+            optimal_w = w
+        
+        # Create bar chart
+        bar_length = int(area / max_area * 40) if max_area > 0 else 0
+        bar = "█" * bar_length
+        
+        print(f"w={w:5.1f}m: {bar} {area:6.1f}m²")
+    
+    print("=" * 50)
+    print(f"Optimal: width={optimal_w:.1f}m, area={max_area:.1f}m²")
+
+
+# Test the function
+if __name__ == "__main__":
+    # Example case
+    result = maximize_enclosure(100)
+    print(f"maximize_enclosure(100) → (width={result[0]}, length={result[1]}, area={result[2]})")
+    
+    # Additional test cases
+    print("\nAdditional test cases:")
+    test_cases = [50, 200, 1000]
+    for fence in test_cases:
+        w, l, a = maximize_enclosure(fence)
+        print(f"Fence={fence}m: width={w:.1f}m, length={l:.1f}m, area={a:.1f}m²")
+    
+    # Test error handling
+    try:
+        maximize_enclosure(-10)
+    except ValueError as e:
+        print(f"\nError handling works: {e}")
+    
+    # Show visualization
+    visualize_area_relationship(100)
+```
+
+## Mathematical Proof Summary
+
+The optimal dimensions are:
+- **Width = fence_length / 4**
+- **Length = fence_length / 2**
+- **Maximum Area = (fence_length)² / 8**
+
+This is proven by:
+1. Setting up the constraint equation: 2w + l = fence_length
+2. Expressing area as A(w) = w(fence_length - 2w)
+3. Finding dA/dw = 0, which gives w = fence_length/4
+4. Confirming d²A/dw² < 0 (maximum point)
+
+The visualization shows that area increases until w = 25m, then decreases, confirming our calculus result.

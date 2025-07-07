@@ -1,0 +1,14 @@
+Solve the following optimization problem:
+
+A farmer has 100 meters of fencing and wants to create a rectangular enclosure 
+against a straight wall (so only 3 sides need fencing).
+
+1. Find the dimensions that maximize the enclosed area
+2. Prove your answer is optimal using calculus
+3. Implement a Python function that:
+   - Takes fence_length as input
+   - Returns optimal dimensions (width, length) and maximum area
+   - Validates inputs (positive fence length)
+4. Create a simple visualization showing the area vs. width relationship
+
+Example: maximize_enclosure(100) → (width=25, length=50, area=1250)

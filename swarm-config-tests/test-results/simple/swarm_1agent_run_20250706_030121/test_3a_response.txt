@@ -1,0 +1,268 @@
+Test 3a: Fence Optimization Problem - Solo Developer Agent Implementation
+
+**Mathematical Solution:**
+
+**Problem Setup:**
+- Total fencing: 100 meters
+- Rectangular enclosure against a wall (only 3 sides need fencing)
+- Goal: Maximize enclosed area
+
+**Variables:**
+- Let w = width (perpendicular to wall)
+- Let l = length (parallel to wall)
+- Constraint: 2w + l = 100 (only 3 sides need fencing)
+- Objective: Maximize Area = w × l
+
+**Calculus Solution:**
+
+1. **Express area in terms of one variable:**
+   - From constraint: l = 100 - 2w
+   - Area(w) = w × (100 - 2w) = 100w - 2w²
+
+2. **Find critical points:**
+   - dA/dw = 100 - 4w
+   - Set derivative equal to zero: 100 - 4w = 0
+   - Solve: w = 25 meters
+
+3. **Find corresponding length:**
+   - l = 100 - 2(25) = 50 meters
+
+4. **Verify maximum (second derivative test):**
+   - d²A/dw² = -4 < 0, confirming maximum
+
+5. **Maximum area:**
+   - Area = 25 × 50 = 1250 square meters
+
+**Python Implementation:**
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from typing import Tuple, Optional
+
+def maximize_enclosure(fence_length: float) -> Tuple[float, float, float]:
+    """
+    Find optimal dimensions for rectangular enclosure against a wall.
+    
+    Args:
+        fence_length (float): Total length of available fencing (must be positive)
+    
+    Returns:
+        Tuple[float, float, float]: (optimal_width, optimal_length, maximum_area)
+    
+    Raises:
+        ValueError: If fence_length is not positive
+        
+    Examples:
+        >>> maximize_enclosure(100)
+        (25.0, 50.0, 1250.0)
+        >>> maximize_enclosure(80)
+        (20.0, 40.0, 800.0)
+    """
+    # Input validation
+    if fence_length <= 0:
+        raise ValueError("Fence length must be positive")
+    
+    # Optimal solution using calculus
+    # For constraint 2w + l = fence_length, optimal w = fence_length/4
+    optimal_width = fence_length / 4
+    optimal_length = fence_length / 2
+    maximum_area = optimal_width * optimal_length
+    
+    return optimal_width, optimal_length, maximum_area
+
+
+def area_function(width: float, fence_length: float) -> float:
+    """
+    Calculate area for given width and fence length.
+    
+    Args:
+        width (float): Width of enclosure
+        fence_length (float): Total fencing available
+    
+    Returns:
+        float: Area of enclosure
+    """
+    if width < 0 or width > fence_length / 2:
+        return 0  # Invalid width
+    
+    length = fence_length - 2 * width
+    return width * length
+
+
+def visualize_optimization(fence_length: float = 100, save_plot: bool = False) -> None:
+    """
+    Create visualization showing area vs width relationship.
+    
+    Args:
+        fence_length (float): Total fencing available
+        save_plot (bool): Whether to save the plot as an image
+    """
+    # Generate width values
+    widths = np.linspace(0, fence_length/2, 1000)
+    areas = [area_function(w, fence_length) for w in widths]
+    
+    # Find optimal point
+    optimal_width, optimal_length, max_area = maximize_enclosure(fence_length)
+    
+    # Create plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(widths, areas, 'b-', linewidth=2, label='Area vs Width')
+    plt.plot(optimal_width, max_area, 'ro', markersize=10, 
+             label=f'Optimal: w={optimal_width:.1f}, Area={max_area:.0f}')
+    
+    plt.xlabel('Width (meters)')
+    plt.ylabel('Area (square meters)')
+    plt.title(f'Fence Optimization: {fence_length}m of Fencing')
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    
+    # Add annotations
+    plt.annotate(f'Maximum Area: {max_area:.0f} m²\nWidth: {optimal_width:.1f} m\nLength: {optimal_length:.1f} m',
+                xy=(optimal_width, max_area), xytext=(optimal_width + 5, max_area - 100),
+                arrowprops=dict(arrowstyle='->', color='red'),
+                fontsize=10, bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.7))
+    
+    if save_plot:
+        plt.savefig('fence_optimization.png', dpi=300, bbox_inches='tight')
+    
+    plt.show()
+
+
+# Comprehensive testing and validation
+import unittest
+
+class TestFenceOptimization(unittest.TestCase):
+    
+    def test_basic_optimization(self):
+        """Test basic optimization case"""
+        w, l, area = maximize_enclosure(100)
+        self.assertEqual(w, 25.0)
+        self.assertEqual(l, 50.0)
+        self.assertEqual(area, 1250.0)
+    
+    def test_different_fence_lengths(self):
+        """Test with different fence lengths"""
+        test_cases = [
+            (80, 20, 40, 800),
+            (60, 15, 30, 450),
+            (120, 30, 60, 1800),
+            (40, 10, 20, 200)
+        ]
+        
+        for fence_len, expected_w, expected_l, expected_area in test_cases:
+            w, l, area = maximize_enclosure(fence_len)
+            self.assertAlmostEqual(w, expected_w, places=1)
+            self.assertAlmostEqual(l, expected_l, places=1)
+            self.assertAlmostEqual(area, expected_area, places=1)
+    
+    def test_input_validation(self):
+        """Test input validation"""
+        with self.assertRaises(ValueError):
+            maximize_enclosure(0)
+        with self.assertRaises(ValueError):
+            maximize_enclosure(-10)
+    
+    def test_area_function(self):
+        """Test area calculation function"""
+        self.assertEqual(area_function(25, 100), 1250)
+        self.assertEqual(area_function(10, 100), 800)
+        self.assertEqual(area_function(0, 100), 0)
+        self.assertEqual(area_function(50, 100), 0)  # Invalid width
+    
+    def test_mathematical_verification(self):
+        """Verify the mathematical solution"""
+        fence_length = 100
+        
+        # Test that our solution satisfies the constraint
+        w, l, area = maximize_enclosure(fence_length)
+        self.assertAlmostEqual(2*w + l, fence_length, places=5)
+        
+        # Test that nearby points have smaller areas
+        epsilon = 1
+        area_left = area_function(w - epsilon, fence_length)
+        area_right = area_function(w + epsilon, fence_length)
+        
+        self.assertLess(area_left, area)
+        self.assertLess(area_right, area)
+
+
+def demonstrate_solution():
+    """Demonstrate the complete solution"""
+    print("=== FENCE OPTIMIZATION PROBLEM ===")
+    print()
+    
+    # Problem statement
+    print("Problem: Maximize rectangular enclosure area using 100m of fencing")
+    print("Constraint: Enclosure is against a wall (only 3 sides need fencing)")
+    print()
+    
+    # Mathematical solution
+    print("Mathematical Solution:")
+    print("- Let w = width, l = length")
+    print("- Constraint: 2w + l = 100")
+    print("- Objective: Maximize Area = w × l")
+    print("- From constraint: l = 100 - 2w")
+    print("- Area(w) = w(100 - 2w) = 100w - 2w²")
+    print("- dA/dw = 100 - 4w = 0")
+    print("- Optimal width: w = 25m")
+    print("- Optimal length: l = 50m")
+    print("- Maximum area: 1250 m²")
+    print()
+    
+    # Verify with function
+    w, l, area = maximize_enclosure(100)
+    print(f"Function verification:")
+    print(f"maximize_enclosure(100) = (width={w}, length={l}, area={area})")
+    print()
+    
+    # Additional examples
+    print("Additional examples:")
+    for fence_len in [60, 80, 120, 200]:
+        w, l, area = maximize_enclosure(fence_len)
+        print(f"  {fence_len}m fence → width={w:.1f}m, length={l:.1f}m, area={area:.0f}m²")
+    
+    return w, l, area
+
+
+if __name__ == "__main__":
+    # Run tests
+    print("Running unit tests...")
+    unittest.main(verbosity=2, exit=False)
+    print()
+    
+    # Demonstrate solution
+    demonstrate_solution()
+    
+    # Create visualization
+    print("\nCreating visualization...")
+    visualize_optimization(100, save_plot=True)
+    
+    print("\nSolution Summary:")
+    print("- Optimal width: 25.0 meters")
+    print("- Optimal length: 50.0 meters") 
+    print("- Maximum area: 1250.0 square meters")
+    print("- This represents the theoretical maximum for any rectangular")
+    print("  enclosure against a wall using 100 meters of fencing")
+```
+
+**Proof of Optimality:**
+
+The solution is proven optimal using calculus:
+
+1. **Constraint equation**: 2w + l = 100 (only 3 sides need fencing)
+2. **Objective function**: Area = w × l
+3. **Substitution**: l = 100 - 2w, so Area(w) = w(100 - 2w) = 100w - 2w²
+4. **First derivative**: dA/dw = 100 - 4w
+5. **Critical point**: Set dA/dw = 0 → w = 25
+6. **Second derivative**: d²A/dw² = -4 < 0 (confirms maximum)
+7. **Boundary analysis**: At w = 0 or w = 50, Area = 0 (minimum)
+
+**Key Insights:**
+- The optimal width is always 1/4 of the total fence length
+- The optimal length is always 1/2 of the total fence length
+- The maximum area is always (fence_length)²/16
+- This ratio (width:length = 1:2) creates the optimal rectangle against a wall
+
+**Agent Coordination:**
+This solution demonstrates systematic problem-solving using mathematical optimization principles, implemented with comprehensive validation and visualization capabilities.

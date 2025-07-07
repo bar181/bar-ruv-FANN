@@ -1,0 +1,111 @@
+Vehicle Routing Problem with Time Windows - Comprehensive Test
+============================================================
+Problem Instance:
+- Depot: (0, 0)
+- Customers: 20
+- Trucks: 4 with capacities [50, 40, 45, 55]
+- Total demand: 213
+
+
+        VEHICLE ROUTING PROBLEM WITH TIME WINDOWS (VRPTW) - MILP FORMULATION
+        
+        SETS:
+        - V = {0, 1, ..., n}: Vertices (0 = depot, 1..n = customers)
+        - K = {1, ..., m}: Vehicles
+        
+        PARAMETERS:
+        - d_ij: Distance between vertices i and j
+        - q_i: Demand at customer i
+        - Q_k: Capacity of vehicle k
+        - [a_i, b_i]: Time window for customer i
+        - s_i: Service time at customer i
+        - t_ij: Travel time from i to j
+        
+        DECISION VARIABLES:
+        - x_ijk ∈ {0,1}: 1 if vehicle k travels from i to j, 0 otherwise
+        - u_ik ≥ 0: Load of vehicle k when leaving vertex i
+        - T_ik ≥ 0: Time when vehicle k starts service at vertex i
+        
+        OBJECTIVE FUNCTION:
+        Minimize: ∑∑∑ d_ij * x_ijk  (total distance)
+                  i j k
+        
+        CONSTRAINTS:
+        
+        1. Each customer visited exactly once:
+           ∑∑ x_ijk = 1, ∀j ∈ {1,...,n}
+           i k
+        
+        2. Vehicle flow conservation:
+           ∑ x_ihk = ∑ x_hjk, ∀h ∈ V, ∀k ∈ K
+           i       j
+        
+        3. Vehicle starts and ends at depot:
+           ∑ x_0jk ≤ 1, ∀k ∈ K  (each vehicle used at most once)
+           j
+           
+           ∑ x_i0k = ∑ x_0jk, ∀k ∈ K  (vehicles return to depot)
+           i       j
+        
+        4. Capacity constraints:
+           u_ik ≤ Q_k, ∀i ∈ V, ∀k ∈ K
+           
+           u_jk ≥ u_ik + q_j - Q_k(1 - x_ijk), ∀i,j ∈ V, ∀k ∈ K
+        
+        5. Time window constraints:
+           a_i ≤ T_ik ≤ b_i, ∀i ∈ {1,...,n}, ∀k ∈ K
+           
+           T_jk ≥ T_ik + s_i + t_ij - M(1 - x_ijk), ∀i,j ∈ V, ∀k ∈ K
+        
+        6. Load balancing (additional objective):
+           Minimize: max_k(∑ q_i * ∑ x_ijk) - min_k(∑ q_i * ∑ x_ijk)
+                            i     j               i     j
+        
+        COMPLEXITY ANALYSIS:
+        - This is a variant of TSP with additional constraints
+        - TSP is NP-hard (reduction from Hamiltonian Cycle)
+        - VRPTW adds time windows and capacity constraints
+        - Therefore, VRPTW is NP-hard
+        
+        NP-HARDNESS PROOF SKETCH:
+        1. Take TSP as known NP-hard problem
+        2. Construct VRPTW instance:
+           - Use 1 vehicle with infinite capacity
+           - Set time windows [0, ∞] for all customers
+           - Set depot at one of the TSP cities
+        3. Any TSP tour corresponds to feasible VRPTW solution
+        4. Optimal VRPTW solution gives optimal TSP tour
+        5. Since TSP ≤_p VRPTW, VRPTW is NP-hard
+        
+
+Solving VRPTW...
+
+Solution Results:
+------------------------------
+total_distance: 456.01
+num_routes: 1
+feasible_routes: 0
+solve_time: 0.00
+objective_value: 556.01
+avg_route_distance: 456.01
+load_balance: 0.00
+
+Route Details:
+------------------------------
+Route 1 (Truck 4, Capacity: 55):
+  Locations: [5, 8, 14, 16, 10, 1, 3, 2, 19, 18, 12, 6, 7, 17, 11, 13, 9, 20, 15, 4]
+  Distance: 456.01 km
+  Load: 0 packages
+  Feasible: False
+  Time: 39.36 hours
+
+Complexity Analysis:
+------------------------------
+time_complexity: O(n²log(n) + n³) where n=20
+space_complexity: O(n²) where n=20
+clarke_wright: O(n²log(n)) for sorting savings
+two_opt: O(n³) for all route improvements
+approximation_ratio: 2-4 times optimal (empirical)
+worst_case_guarantee: No theoretical guarantee (heuristic)
+
+Results saved to vrp_results.json and vrp_solution.png

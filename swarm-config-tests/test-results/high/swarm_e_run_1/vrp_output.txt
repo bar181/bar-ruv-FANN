@@ -1,0 +1,100 @@
+Generating test instance...
+
+Problem Statistics:
+  Locations: 20
+  Trucks: 4
+  Total demand: 213
+  Total capacity: 190
+  Utilization: 112.1%
+
+============================================================
+NP-Hardness Proof:
+============================================================
+
+        THEOREM: The Vehicle Routing Problem with Time Windows (VRPTW) is NP-hard.
+        
+        PROOF by reduction from Traveling Salesman Problem (TSP):
+        
+        1. TSP is known to be NP-hard.
+        
+        2. We show TSP ≤_p VRPTW (TSP reduces to VRPTW in polynomial time).
+        
+        3. Construction:
+           Given a TSP instance with n cities and distance matrix D:
+           - Create a VRPTW instance with:
+             * n delivery locations at the same coordinates as TSP cities
+             * 1 truck with capacity = n (can visit all locations)
+             * Each location has demand = 1
+             * All time windows = [0, ∞) (no time constraints)
+             * Depot at arbitrary location
+        
+        4. Correspondence:
+           - Any TSP tour of length L corresponds to a VRPTW solution of length L + 2*d₀
+             where d₀ is the distance from depot to the tour
+           - The optimal VRPTW solution gives the optimal TSP tour
+        
+        5. The reduction takes O(n²) time to construct the distance matrix
+        
+        6. Therefore, since TSP is NP-hard and reduces to VRPTW, VRPTW is NP-hard.
+        
+        COROLLARY: No polynomial-time algorithm exists for VRPTW unless P = NP.
+        
+        PRACTICAL IMPLICATION: We must use approximation algorithms or heuristics.
+        
+
+============================================================
+Algorithm Comparison:
+============================================================
+Running algorithm comparison...
+
+1. Clarke-Wright Savings Algorithm
+   Distance: 1052.53 km
+   Time: 0.000 seconds
+   Feasible: False
+
+2. Genetic Algorithm
+   Distance: 10596.12 km
+   Time: 0.214 seconds
+   Feasible: False
+
+3. Simulated Annealing
+   Distance: 570.33 km
+   Time: 0.056 seconds
+   Feasible: False
+
+Best algorithm: Simulated Annealing with distance 570.33 km
+
+Visualizing best solution...
+
+============================================================
+Complexity Analysis:
+============================================================
+
+Clarke-Wright Savings:
+  Time: O(n² log n)
+  Space: O(n²)
+  Description: Efficient constructive heuristic
+
+Genetic Algorithm:
+  Time: O(g × p × n²)
+  Space: O(p × n)
+  Description: Population-based metaheuristic
+
+Simulated Annealing:
+  Time: O(iterations × n)
+  Space: O(n)
+  Description: Local search metaheuristic
+
+Nearest Neighbor:
+  Time: O(n²)
+  Space: O(n)
+  Description: Simple greedy heuristic
+
+============================================================
+Approximation Bounds:
+============================================================
+  Clarke-Wright: No fixed bound, typically 10-15% from optimal
+  Genetic Algorithm: No theoretical bound, depends on parameters
+  Simulated Annealing: Probabilistic convergence to optimal as T→0
+  Nearest Neighbor: At most ⌈log n⌉ times optimal for metric TSP
+  General VRPTW: Best known approximation ratio is O(log n)

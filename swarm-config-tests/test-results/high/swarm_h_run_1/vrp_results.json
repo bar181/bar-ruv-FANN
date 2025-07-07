@@ -1,0 +1,59 @@
+{
+  "algorithm": "greedy_nearest_neighbor",
+  "total_distance_km": 471.73,
+  "total_routes": 4,
+  "unvisited_locations": 3,
+  "feasible": false,
+  "routes": [
+    {
+      "truck_id": 1,
+      "locations": [
+        5,
+        8,
+        18,
+        19,
+        2
+      ],
+      "total_distance": 105.6460321730475,
+      "total_demand": 46
+    },
+    {
+      "truck_id": 2,
+      "locations": [
+        4,
+        15,
+        20
+      ],
+      "total_distance": 77.72424018800739,
+      "total_demand": 40
+    },
+    {
+      "truck_id": 3,
+      "locations": [
+        14,
+        16,
+        1,
+        3,
+        10
+      ],
+      "total_distance": 148.24231853758562,
+      "total_demand": 44
+    },
+    {
+      "truck_id": 4,
+      "locations": [
+        11,
+        9,
+        13,
+        17
+      ],
+      "total_distance": 140.11832318463203,
+      "total_demand": 53
+    }
+  ],
+  "mathematical_formulation": "VRPTW as Mixed Integer Linear Program",
+  "np_hardness": "Proven by reduction from TSP",
+  "approximation_ratio": "O(log n) for TSP variant",
+  "time_complexity": "O(n^2 * m)",
+  "space_complexity": "O(n + m)"
+}

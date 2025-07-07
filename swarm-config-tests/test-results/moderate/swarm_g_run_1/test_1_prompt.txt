@@ -1,0 +1,14 @@
+Create a Python class called 'TaskQueue' that implements:
+
+1. A simple priority queue for tasks
+2. Methods: add_task(task, priority), get_next_task(), peek(), is_empty()
+3. Priority levels: HIGH (1), MEDIUM (2), LOW (3)
+4. Tasks with same priority should be FIFO
+5. Thread-safe implementation using threading.Lock
+6. Basic error handling for invalid inputs
+7. Include usage example and 5-7 unit tests
+
+Requirements:
+- Use heapq for efficiency
+- Include type hints and docstrings
+- Handle edge cases gracefully
