@@ -1,0 +1,206 @@
+{
+  "name": "ruv-swarm-5-agent-landing",
+  "version": "1.0.0",
+  "description": "Optimized 5-agent landing page build configuration",
+  "performance": {
+    "budgets": {
+      "html": 15000,
+      "css": 20000,
+      "javascript": 30000,
+      "images": 200000,
+      "fonts": 50000,
+      "total": 315000
+    },
+    "targets": {
+      "lighthouse": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "webVitals": {
+        "LCP": 2500,
+        "FID": 100,
+        "CLS": 0.1,
+        "FCP": 1800,
+        "TTFB": 800
+      }
+    }
+  },
+  "optimization": {
+    "html": {
+      "minify": true,
+      "removeComments": true,
+      "collapseWhitespace": true,
+      "removeAttributeQuotes": false,
+      "inlineCSS": {
+        "threshold": 5000,
+        "target": "critical"
+      }
+    },
+    "css": {
+      "minify": true,
+      "purge": {
+        "enabled": true,
+        "content": ["*.html", "*.js"],
+        "safelist": [
+          "data-status",
+          "data-agent-id",
+          "loaded",
+          "animated"
+        ]
+      },
+      "optimize": {
+        "mergeRules": true,
+        "mergeLonghand": true,
+        "discardDuplicates": true
+      }
+    },
+    "javascript": {
+      "minify": true,
+      "mangle": true,
+      "compress": {
+        "drop_console": false,
+        "drop_debugger": true,
+        "dead_code": true,
+        "unused": true
+      },
+      "bundle": {
+        "splitting": true,
+        "chunks": {
+          "vendor": ["intersection-observer"],
+          "main": ["./js-optimization-5-agent.js"],
+          "analytics": ["gtag", "analytics"]
+        }
+      }
+    },
+    "images": {
+      "formats": ["webp", "jpg"],
+      "sizes": [320, 768, 1200, 1920],
+      "quality": {
+        "webp": 85,
+        "jpg": 85
+      },
+      "optimization": {
+        "progressive": true,
+        "interlaced": false,
+        "optimizationLevel": 3
+      }
+    },
+    "fonts": {
+      "subset": true,
+      "formats": ["woff2"],
+      "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.,!?%",
+      "fontDisplay": "swap"
+    }
+  },
+  "compression": {
+    "brotli": {
+      "enabled": true,
+      "level": 11,
+      "extensions": ["html", "css", "js", "svg", "json"]
+    },
+    "gzip": {
+      "enabled": true,
+      "level": 9,
+      "extensions": ["html", "css", "js", "svg", "json"]
+    }
+  },
+  "caching": {
+    "patterns": [
+      {
+        "match": "\\.(jpg|jpeg|png|webp|svg|gif)$",
+        "maxAge": 31536000,
+        "immutable": true
+      },
+      {
+        "match": "\\.(woff2|woff|ttf|eot)$",
+        "maxAge": 31536000,
+        "immutable": true
+      },
+      {
+        "match": "\\.(css|js)$",
+        "maxAge": 31536000,
+        "immutable": true,
+        "versioning": "hash"
+      },
+      {
+        "match": "\\.html$",
+        "maxAge": 0,
+        "mustRevalidate": true
+      }
+    ]
+  },
+  "preload": {
+    "resources": [
+      {
+        "href": "/fonts/inter-var-subset.woff2",
+        "as": "font",
+        "type": "font/woff2",
+        "crossorigin": true
+      },
+      {
+        "href": "/img/hero-5-agent.webp",
+        "as": "image"
+      },
+      {
+        "href": "/css/main-5-agent.css",
+        "as": "style"
+      }
+    ]
+  },
+  "metrics": {
+    "tracking": {
+      "webVitals": true,
+      "customMetrics": [
+        "agentActivationTime",
+        "swarmCoordinationLatency",
+        "taskCompletionRate",
+        "tokenEfficiency"
+      ]
+    },
+    "reporting": {
+      "endpoint": "/api/metrics",
+      "batch": true,
+      "interval": 5000
+    }
+  },
+  "testing": {
+    "lighthouse": {
+      "ci": true,
+      "budget": "./lighthouse-budget.json",
+      "assertions": {
+        "first-contentful-paint": ["warn", { "maxNumericValue": 1800 }],
+        "interactive": ["error", { "maxNumericValue": 3500 }],
+        "speed-index": ["warn", { "maxNumericValue": 3000 }]
+      }
+    },
+    "browserstack": {
+      "browsers": [
+        "chrome:latest",
+        "firefox:latest",
+        "safari:latest",
+        "edge:latest"
+      ],
+      "devices": [
+        "iPhone 12",
+        "Samsung Galaxy S21",
+        "iPad Pro"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "npm run clean && npm run optimize && npm run compress",
+    "clean": "rm -rf dist/*",
+    "optimize": "npm run optimize:html && npm run optimize:css && npm run optimize:js && npm run optimize:images",
+    "optimize:html": "html-minifier --config-file .htmlminrc",
+    "optimize:css": "postcss src/css/*.css --dir dist/css",
+    "optimize:js": "rollup -c rollup.config.js",
+    "optimize:images": "imagemin src/img/* --out-dir=dist/img",
+    "compress": "npm run compress:brotli && npm run compress:gzip",
+    "compress:brotli": "find dist -type f \\( -name '*.html' -o -name '*.css' -o -name '*.js' \\) -exec brotli {} \\;",
+    "compress:gzip": "find dist -type f \\( -name '*.html' -o -name '*.css' -o -name '*.js' \\) -exec gzip -9 -k {} \\;",
+    "test:performance": "lighthouse https://localhost:3000 --budget-path=./lighthouse-budget.json",
+    "analyze": "webpack-bundle-analyzer dist/stats.json"
+  }
+}

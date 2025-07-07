@@ -1,0 +1,302 @@
+/* =====================================================
+   CRITICAL PATH CSS - Inline in <head>
+   ===================================================== */
+
+/* Custom Properties for 5-Agent Theme */
+:root {
+  /* Color Palette */
+  --primary: #00f0ff;
+  --secondary: #ff00ff;
+  --accent: #ffff00;
+  --bg-dark: #0a0e27;
+  --bg-light: #1a1e37;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  
+  /* Agent Status Colors */
+  --agent-idle: #666666;
+  --agent-active: #00f0ff;
+  --agent-processing: #ffff00;
+  --agent-complete: #00ff00;
+  --agent-error: #ff0066;
+  
+  /* Performance Metrics */
+  --metric-positive: #00ff88;
+  --metric-negative: #ff4466;
+  --metric-neutral: #8888ff;
+  
+  /* Layout */
+  --container-max: 1200px;
+  --spacing-unit: 8px;
+  
+  /* Animation Timing */
+  --anim-fast: 0.2s;
+  --anim-normal: 0.3s;
+  --anim-slow: 0.6s;
+}
+
+/* Reset & Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* GPU-Accelerated Base Elements */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Hero Section - Critical */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  contain: layout style paint;
+}
+
+.hero-content {
+  text-align: center;
+  z-index: 2;
+  transform: translateZ(0);
+}
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  margin: 0 0 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =====================================================
+   NON-CRITICAL CSS - Load Async
+   ===================================================== */
+
+/* 5-Agent Grid Layout */
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: calc(var(--spacing-unit) * 3);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: calc(var(--spacing-unit) * 4);
+  contain: layout;
+}
+
+/* Agent Card with Hardware Acceleration */
+.agent-card {
+  position: relative;
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: calc(var(--spacing-unit) * 3);
+  transform: translateZ(0);
+  transition: transform var(--anim-normal) cubic-bezier(0.4, 0, 0.2, 1);
+  contain: layout style;
+}
+
+.agent-card:hover {
+  transform: translateZ(0) translateY(-4px);
+}
+
+/* Agent Status Indicator - Optimized Animation */
+.agent-status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--agent-idle);
+  transform: translateZ(0);
+}
+
+.agent-status[data-status="active"] {
+  background: var(--agent-active);
+  animation: pulse-optimized var(--anim-slow) ease-in-out infinite;
+}
+
+@keyframes pulse-optimized {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5) translateZ(0);
+    opacity: 0.7;
+  }
+}
+
+/* Performance Metrics Display */
+.performance-metrics {
+  background: linear-gradient(135deg, var(--bg-light), rgba(0, 240, 255, 0.1));
+  border-radius: 16px;
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 6) auto;
+  max-width: 800px;
+  contain: layout style;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: calc(var(--spacing-unit) * 3);
+  margin-top: calc(var(--spacing-unit) * 3);
+}
+
+.metric {
+  text-align: center;
+  transform: translateZ(0);
+}
+
+.metric-value {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: var(--primary);
+  display: block;
+  transform: translateZ(0);
+  animation: count-up 1s ease-out;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes count-up {
+  from {
+    transform: translateY(20px) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) translateZ(0);
+    opacity: 1;
+  }
+}
+
+/* Network Visualization - GPU Optimized */
+.network-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+/* Connection Lines with CSS */
+.agent-connection {
+  position: absolute;
+  background: linear-gradient(90deg, 
+    transparent, 
+    var(--primary) 50%, 
+    transparent
+  );
+  height: 2px;
+  transform-origin: left center;
+  animation: data-flow 2s linear infinite;
+  transform: translateZ(0);
+}
+
+@keyframes data-flow {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Performance Indicators */
+.performance-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-light);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  contain: layout style paint;
+}
+
+.performance-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--metric-positive), var(--primary));
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: fill-bar 1.5s ease-out forwards;
+  will-change: transform;
+}
+
+@keyframes fill-bar {
+  to {
+    transform: scaleX(var(--fill-percent, 0.8));
+  }
+}
+
+/* Utility Classes for Performance */
+.lazy-load {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--anim-normal), transform var(--anim-normal);
+}
+
+.lazy-load.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* CSS Containment for Complex Components */
+.contained-component {
+  contain: layout style paint;
+}
+
+.contained-strict {
+  contain: strict;
+}
+
+/* Reduce Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print,
+  .agent-connection,
+  .network-canvas {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+}
